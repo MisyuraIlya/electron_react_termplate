@@ -1,9 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
-const { exec } = require('child_process');
+const { handleTodoFormSubmission } = require('./handlers/core');
 
-const isDev = process.env.NODE_ENV !== 'development'
+const isDev =  !app.isPackaged
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -17,20 +17,15 @@ const createWindow = () => {
     }
   });
 
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:3000/');
-  } else {
-    // Load the React build from the build folder in production mode
-    mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, './app/build/index.html'),
-        protocol: 'file:',
-        slashes: true
-      })
-    );
+  mainWindow.loadURL(
+    isDev
+      ? 'http://localhost:3000'
+      : `file://${path.join(__dirname, '../build/index.html')}`
+  )
+  if(isDev){
+    mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
@@ -45,13 +40,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.on('submit:todoForm', (event, args) => {
-  console.log(args);
-  exec('cd .. && ls', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing command: ${error.message}`);
-      return;
-    }
-    console.log(`Command output: ${stdout}`);
-  });
-});
+
+
+ipcMain.on('submit:todoForm', handleTodoFormSubmission);

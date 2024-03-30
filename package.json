@@ -12,7 +12,7 @@
     "@types/react-dom": "^18.2.23",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "electron": "^29.1.6",
+    "electron-is-dev": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -28,12 +28,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron:serve": "concurrently -k \"cross-env BROWSER=none npm run start\" \"npm run electron:start\"",
-    "electron:build": "yarn build && electron-builder -c.extraMetadata.main=build/main.js",
+    "electron:build": "npm run build && electron-builder -c.extraMetadata.main=build/main.js",
     "electron:start": "wait-on tcp:3000 && electron ."
   },
   "build": {
     "extends": null,
     "appId": "com.example.electron-cra",
+    "productName": "SpeTsaR",
     "files": [
       "dist/**/*",
       "build/**/*",
@@ -41,8 +42,21 @@
       "package.json"
     ],
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "dist"
+    },
+    "mac": {
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icon.png"
     }
+  },
+  "devDependencies": {
+    "electron": "^29.1.6",
+    "electron-builder": "^24.13.3"
   },
   "eslintConfig": {
     "extends": [

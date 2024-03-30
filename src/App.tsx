@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 
 function App() {
   const ipcRenderer = (window as any).ipcRenderer;
+  const [test, setTest] = useState('')
+  const handleSubmit = async () => {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        ipcRenderer.on('submit:todoForm:response', (event:any, response:any) => {
+          resolve(response);
+        });
 
-  const handleSubmit = (
-  ) => {
-    ipcRenderer.send('submit:todoForm', 'hello world');
+        ipcRenderer.send('submit:todoForm', 'hello world');
+      });
+
+      console.log('Result from main process:', result);
+      setTest(result as string)
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -16,6 +28,9 @@ function App() {
       <button onClick={() => handleSubmit()}>
         click
       </button>
+      <p>
+        result: {test}
+      </p>
     </div>
   );
 }
